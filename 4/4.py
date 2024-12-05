@@ -47,6 +47,8 @@ def check(grid, y, x, max_y, max_x):
                     count += 1
     return count
 
+
+
 def part1(grid):
     count = 0
     max_y = len(grid)
