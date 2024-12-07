@@ -1,5 +1,5 @@
 import copy
-
+from time import perf_counter
 
 def next_position(pos, direction):
     x = y = None
@@ -106,8 +106,14 @@ def test(t):
 with open('6.in') as f:
     grid = [list(x) for x in f.read().split('\n')]
     print('Part 1:')
+    start = perf_counter()
     path = part1(grid)
     print(len(path))
+    end = perf_counter()
+    print(f'Part 1 took {end - start} sec')
     print('Part 2:')
+    start = perf_counter()
     count = part2(grid, path)
+    end = perf_counter()
+    print(f'Part 2 took {end - start} sec')
     print(count)
