@@ -1,5 +1,3 @@
-from operator import mul
-
 def solve(target, currs, remaining):
     # print(target)
     while True:
@@ -31,11 +29,13 @@ def solve(target, currs, remaining):
         #remaining = [3]
 
 
-def part1(inp_dict):
+def part1(data):
     count = 0
     progress = 1
-    total = len(inp_dict.keys())
-    for val, nums in inp_dict.items():
+    total = len(data)
+    for line in data:
+        val = int(line.split(':')[0])
+        nums = list(map(int, line.split(':')[1].strip().split()))
         print(f'On {progress} of {total}')
         progress += 1
         # print('--------')
@@ -48,10 +48,5 @@ def part1(inp_dict):
             
 
 with open('7.in') as f:
-    lines = [line for line in f.read().split('\n')]
-    inp_dict = {}
-    for line in lines:
-        val, nums = line.split(':')
-        inp_dict[int(val)] = list(map(int, nums.strip().split()))
-    # print(inp_dict)
-    print(part1(inp_dict))
+    data = f.read().split('\n')
+    print(part1(data))
