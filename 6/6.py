@@ -1,5 +1,6 @@
 import copy
 from time import perf_counter
+from utils.timing import time_function
 
 def next_position(pos, direction):
     x = y = None
@@ -64,7 +65,7 @@ def get_start(grid):
             if grid[y][x] == '^':
                 return (y,x)
 
-
+# @time_function
 def part1(grid):
     visited = set()
     start = tuple()
@@ -75,6 +76,7 @@ def part1(grid):
     walk(grid, visited, start, 'N', max_y, max_x)
     return visited
 
+# @time_function
 def part2(grid, path):
     count = 0
     path.remove(get_start(grid))
@@ -103,17 +105,18 @@ def part2(grid, path):
 def test(t):
     t.append('1')
 
-with open('6.in') as f:
-    grid = [list(x) for x in f.read().split('\n')]
-    print('Part 1:')
-    start = perf_counter()
-    path = part1(grid)
-    print(len(path))
-    end = perf_counter()
-    print(f'Part 1 took {end - start} sec')
-    print('Part 2:')
-    start = perf_counter()
-    count = part2(grid, path)
-    end = perf_counter()
-    print(f'Part 2 took {end - start} sec')
-    print(count)
+if __name__ == '__main__':
+    with open('6/6.in') as f:
+        grid = [list(x) for x in f.read().split('\n')]
+        print('Part 1:')
+        # start = perf_counter()
+        path = part1(grid)
+        print(len(path))
+        # end = perf_counter()
+        # print(f'Part 1 took {end - start} sec')
+        print('Part 2:')
+        # start = perf_counter()
+        count = part2(grid, path)
+        # end = perf_counter()
+        # print(f'Part 2 took {end - start} sec')
+        print(count)
