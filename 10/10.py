@@ -8,7 +8,6 @@ def get_trailheads(grid):
 
 def find_next(path, grid, trails=[]):
     y,x = path[-1]
-    print(grid[y][x])
     current = int(grid[y][x])
     next_height = current + 1
     max_y = len(grid)
@@ -26,7 +25,7 @@ def find_next(path, grid, trails=[]):
             continue
 
         # If next cell is not valid then continue
-        if grid[new_y][new_x] != next_height:
+        if int(grid[new_y][new_x]) != next_height:
             continue
 
         if (new_y, new_x) in path:
@@ -36,8 +35,8 @@ def find_next(path, grid, trails=[]):
         path_copy.append((new_y, new_x))
 
         # Exit criteria for valid trail
-        if current == 8 and grid[new_y][new_x] == 9:
-            trails.append(path)
+        if current == 8 and int(grid[new_y][new_x]) == 9:
+            trails.append(path_copy)
         
         find_next(path_copy, grid, trails)
     return trails
@@ -74,8 +73,8 @@ def find_next(path, grid, trails=[]):
     # return count
 
 def get_score(trailhead, grid):
-    trails = find_next([trailhead], 0, grid)
-    print(trails)
+    trails = find_next([trailhead], grid)
+    print(len(trails))
 
 def part1(grid):
     trailheads = get_trailheads(grid)
