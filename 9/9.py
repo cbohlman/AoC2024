@@ -1,4 +1,5 @@
 from collections import defaultdict
+import itertools
 
 class File:
     def __init__(self, id, start, end):
@@ -6,10 +7,10 @@ class File:
         self.end = end
         self.id = id
         self.length = end - start + 1
-        self.moved = False
+        self.is_moved = False
     
     def __str__(self):
-        return f'start: {self.start}, end: {self.end}, id: {self.id}'
+        return f'start: {self.start}, end: {self.end}, id: {self.id}, length: {self.length}'
 
 def parse_disk(disk):
     disk_map = []
@@ -48,8 +49,6 @@ def sort_disk_map1(disk_map):
 def part1(disk):
     disk_map = parse_disk(disk) # List of Strings
     disk_map = sort_disk_map1(disk_map)
-    # print(disk_map)
-    # print(disk_map)
     checksum = 0
     for i in range(len(disk_map)):
         if disk_map[i] == '.':
@@ -57,6 +56,23 @@ def part1(disk):
         checksum += i * int(disk_map[i])
     return checksum
 
+def get_spaces(disk_map):
+    spaces = []
+    start = 0
+    end = 0
+    while start < len(disk_map) and end < len(disk_map) - 1:
+        if disk_map[start] != '.':
+            start += 1
+            end += 1
+        else:
+            if  disk_map[end + 1] != '.' :
+                space_len = end - start + 1
+                spaces.append(File('.', start, end))
+                start = end +1
+                end = start
+            else:
+                end += 1
+    return spaces
 
 def sort_disk_map2(disk_map):
     files = []
@@ -75,32 +91,19 @@ def sort_disk_map2(disk_map):
             files.append(File(file_id, c_start, c_end))
 
     files.reverse()
-    [print(file) for file in files]
-    start = 0
-    end = 0
-    while start < len(disk_map):
-        if disk_map[start] != '.':
-            start += 1
-            end += 1
-        else:
-            if disk_map[end + 1] != '.':
-                space_len = end - start + 1
-                print(start, end, space_len)
-                for idx, file in enumerate(files):
-                    if file.length <= space_len and not file.moved:
-                        print(file)
-                        for i in range(start, end):
-                            disk_map[i] = file.id
-                        del files[idx]
-                        break
-                start = end +1
-                end = start
-            else:
-                end += 1
-
-    print(disk_map)
-
-
+    spaces = get_spaces(disk_map)
+    for f_idx, file in enumerate(files):
+        if file.is_moved:
+            continue
+        for space in spaces:
+            if space.length >= file.length and space.start < file.start:
+                for i in range(file.length):
+                    disk_map[space.start + i] = disk_map[file.start + i]
+                    disk_map[file.start + i] = '.'
+                break
+        spaces = get_spaces(disk_map)
+        file.is_moved = True
+    return disk_map
             
 def part1(disk):
     disk_map = parse_disk(disk) # List of Strings
@@ -119,13 +122,12 @@ def part2(disk):
     disk_map = sort_disk_map2(disk_map)
     checksum = 0
     for i in range(len(disk_map)):
-        if disk_map[i] == '.':
-            break
-        checksum += i * int(disk_map[i])
+        if disk_map[i] != '.':
+            checksum += i * int(disk_map[i])
     return checksum
     
 
-with open('9.test') as f:
+with open('9.in') as f:
     disk = f.read()
     print('Part 1:')
     checksum1 = part1(disk)
