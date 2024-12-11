@@ -6,84 +6,49 @@ def get_trailheads(grid):
                 trailheads.append((y,x))
     return trailheads
 
-def find_next(path, grid, trails=[]):
-    y,x = path[-1]
-    current = int(grid[y][x])
-    next_height = current + 1
+def find_next(point, grid, seen, part):
+    y, x = point
     max_y = len(grid)
     max_x = len(grid[0])
+    if part == 1:
+        if (y,x) in seen:
+            return 0
+        seen.add((y,x))
+    if int(grid[y][x]) == 9:
+        return 1
     count = 0
-
     dirs = [(0,-1), (-1,0), (0,1), (1,0)]
-
     for dy, dx in dirs:
-        new_y = y + dy
-        new_x = x + dx
-    
-        # Within Grid Limits
+        new_y, new_x = y + dy, x + dx
         if new_y < 0 or new_y >= max_y or new_x < 0 or new_x >= max_x:
             continue
+        if int(grid[new_y][new_x]) == 1 + int(grid[y][x]):
+            count += find_next((new_y, new_x), grid, seen, part)
+    return count
 
-        # If next cell is not valid then continue
-        if int(grid[new_y][new_x]) != next_height:
-            continue
-
-        if (new_y, new_x) in path:
-            continue
-
-        path_copy = path.copy()
-        path_copy.append((new_y, new_x))
-
-        # Exit criteria for valid trail
-        if current == 8 and int(grid[new_y][new_x]) == 9:
-            trails.append(path_copy)
-        
-        find_next(path_copy, grid, trails)
-    return trails
-
-    # # Left
-    # if x-1 >= 0:
-    #     if current == 8 and int(grid[y][x-1]) == 9:
-    #         print('Valid')
-    #         return 1
-    #     if int(grid[y][x-1]) == next_height:
-    #         count += find_next((y, x-1), next_height, grid)
-    # # Up
-    # if y-1 >= 0:
-    #     if current == 8 and int(grid[y-1][x]) == 9:
-    #         print('Valid')
-    #         return 1
-    #     if int(grid[y-1][x]) == next_height:
-    #         count += find_next((y-1, x), next_height, grid)
-    # # Right
-    # if x+1< max_x:
-    #     if current == 8 and int(grid[y][x+1]) == 9:
-    #         print('Valid')
-    #         return 1
-    #     if int(grid[y][x+1]) == next_height:
-    #         count += find_next((y, x+1), next_height, grid)
-    # # Down
-    # if y+1 < max_y:
-    #     if current == 8 and int(grid[y+1][x]) == 9:
-    #         print('Valid')
-    #         return 1
-    #     if int(grid[y+1][x]) == next_height:
-    #         count += find_next((y+1, x), next_height, grid)
-    # # print(count)
-    # return count
-
-def get_score(trailhead, grid):
-    trails = find_next([trailhead], grid)
-    print(len(trails))
+def get_score(trailhead, grid, part):
+    seen = set()
+    score = find_next(trailhead, grid, seen, part)
+    # print(f'head: {trailhead}, score: {score}')
+    return score
 
 def part1(grid):
     trailheads = get_trailheads(grid)
-    print(trailheads)
+    count = 0
     for trailhead in trailheads:
-        print(trailhead)
-        get_score(trailhead, grid)
+        count += get_score(trailhead, grid, 1)
+    return count
 
-with open('10.test') as f:
+def part2(grid):
+    trailheads = get_trailheads(grid)
+    count = 0
+    for trailhead in trailheads:
+        count += get_score(trailhead, grid, 2)
+    return count
+
+with open('10.in') as f:
     grid = [list(line) for line in f.read().split('\n')]
-    print(grid)
-    part1(grid)
+    print('Part 1:')
+    print(part1(grid))
+    print('Part 2:')
+    print(part2(grid))
