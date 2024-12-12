@@ -1,4 +1,4 @@
-from collections import deque
+from collections import deque, defaultdict
 
 class Plot:
     def __init__(self, plant, locations):
@@ -21,7 +21,37 @@ class Plot:
             perim += p
         return perim
 
-        
+    def get_sides(self):
+        corners = 0
+        for loc in self.locations:
+            y, x = loc
+            # External Corners
+            # NE
+            if (y-1, x) not in self.locations and (y, x+1) not in self.locations:
+                corners += 1
+            # SE
+            if (y+1, x) not in self.locations and (y, x+1) not in self.locations:
+                corners += 1
+            # SW
+            if (y+1, x) not in self.locations and (y, x-1) not in self.locations:
+                corners += 1
+            # NW
+            if (y-1, x) not in self.locations and (y, x-1) not in self.locations:
+                corners += 1
+            # Internal Corners
+            #NE
+            if (y-1, x) in self.locations and (y, x+1) in self.locations and (y-1, x+1) not in self.locations:
+                corners += 1
+            # SE
+            if (y+1, x) in self.locations and (y, x+1) in self.locations and (y+1, x+1) not in self.locations:
+                corners += 1
+            # SW
+            if (y+1, x) in self.locations and (y, x-1) in self.locations and (y+1, x-1) not in self.locations:
+                corners += 1
+            # NW
+            if (y-1, x) in self.locations and (y, x-1) in self.locations and (y-1, x-1) not in self.locations:
+                corners += 1
+        return corners
     
 def find_plot(start, grid):
     max_y = len(grid)
@@ -50,12 +80,6 @@ def find_plot(start, grid):
                     Q.append((new_y, new_x))
     return plot
 
-
-
-
-
-
-
 def find_plots(grid):
     seen = set()
     plots = []
@@ -74,11 +98,18 @@ def part1(grid):
     count = 0
     plots = find_plots(grid)
     for plot in plots:
-        # print(plot.plant, plot.get_area(), plot.get_perimeter())
         count += (plot.get_area() * plot.get_perimeter())
     return count
 
+def part2(grid):
+    plots = find_plots(grid)
+    count = 0
+    for plot in plots:
+        count += plot.get_area() * plot.get_sides()
+    return count
 with open('12.in') as f:
     grid = [list(line) for line in f.read().split('\n')]
     print('Part 1: ')
     print(part1(grid))
+    print('Part 2: ')
+    print(part2(grid))
