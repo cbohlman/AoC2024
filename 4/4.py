@@ -49,6 +49,7 @@ def check(grid, y, x, max_y, max_x):
                     count += 1
     return count
 
+
 def check2(grid_dict, y, x):
     valid = ['SAM', 'MAS']
     l1 = grid_dict[(y-1,x-1)] + grid_dict[(y,x)] + grid_dict[(y+1,x+1)] # top left to bottom right 
