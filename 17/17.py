@@ -1,3 +1,16 @@
+'''
+Program Loop:
+B = A % 8 
+B = B ^ 1
+C = A // 2**B
+A = A // 8
+B = B ^ 4
+B = B ^ C
+output (B % 8)
+Jump to start
+'''
+
+
 class Program:
     def __init__(self, A, B, C, instructions, part):
         self.A = A
@@ -29,6 +42,7 @@ class Program:
             try:
                 operation = self.instructions[pointer]
                 opcode = self.instructions[pointer + 1]
+                print(operation, opcode)
                 if operation == 0:
                     self.adv(opcode)
                     pointer += 2
@@ -69,36 +83,36 @@ class Program:
                 return True
 
 
-    def adv(self, opcode):
+    def adv(self, opcode): # 0 
         numerator = self.A
         denominator = 2**self.get_combo_operand(opcode)
         res = int(numerator/denominator)
         # print(f'adv: {res}')
         self.A = res
     
-    def bxl(self, opcode):
+    def bxl(self, opcode): # 1
         res = self.B ^ self.get_literal_operand(opcode)
         # print(f'bxl: {res}')
         self.B = res
 
-    def bst(self, opcode):
+    def bst(self, opcode): # 2
         res = self.get_combo_operand(opcode) % 8 
         # print(f'bst {res}')
         self.B = res
 
-    def jnz(self, opcode):
+    def jnz(self, opcode): # 3
         if self.A == 0:
             # print(f'jnz zero register')
             return None
         # print(f'jnz: {self.get_literal_operand(opcode)}')
         return self.get_literal_operand(opcode)
     
-    def bxc(self, opcode):
+    def bxc(self, opcode): # 4
         res = self.B ^ self.C
         # print(f'bxc: {res}')
         self.B = res
         
-    def out(self, opcode):
+    def out(self, opcode): # 5
         res = self.get_combo_operand(opcode) % 8
         if self.part == 1:
             # print(f'out: {res}')
@@ -109,14 +123,14 @@ class Program:
             else:
                 return False
 
-    def bdv(self, opcode):
+    def bdv(self, opcode): # 6
         numerator = self.A
         denominator = 2**self.get_combo_operand(opcode)
         res = int(numerator/denominator)
         # print(f'bdv: {res}')
         self.B = res
 
-    def cdv(self, opcode):
+    def cdv(self, opcode): # 7
         numerator = self.A
         denominator = 2**self.get_combo_operand(opcode)
         res = int(numerator/denominator)
